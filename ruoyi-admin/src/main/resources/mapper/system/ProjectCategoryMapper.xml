@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.ProjectCategoryMapper">
+    
+    <resultMap type="ProjectCategory" id="ProjectCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="projectCategoryName"    column="project_category_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProjectCategoryVo">
+        select id, project_category_name, create_time, update_time from project_category
+    </sql>
+
+    <select id="selectProjectCategoryList" parameterType="ProjectCategory" resultMap="ProjectCategoryResult">
+        <include refid="selectProjectCategoryVo"/>
+        <where>  
+            <if test="projectCategoryName != null  and projectCategoryName != ''"> and project_category_name like concat('%', #{projectCategoryName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectCategoryById" parameterType="String" resultMap="ProjectCategoryResult">
+        <include refid="selectProjectCategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProjectCategory" parameterType="ProjectCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into project_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectCategoryName != null and projectCategoryName != ''">project_category_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectCategoryName != null and projectCategoryName != ''">#{projectCategoryName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectCategory" parameterType="ProjectCategory">
+        update project_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectCategoryName != null and projectCategoryName != ''">project_category_name = #{projectCategoryName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectCategoryById" parameterType="String">
+        delete from project_category where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectCategoryByIds" parameterType="String">
+        delete from project_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

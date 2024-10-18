@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.EntityMapper">
+
+    <resultMap type="Entity" id="EntityResult">
+        <result property="id" column="id"/>
+        <result property="projectSubcategoryId" column="project_subcategory_id"/>
+        <result property="entityCode" column="entity_code"/>
+        <result property="name" column="name"/>
+        <result property="specification" column="specification"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="pairResultMap" type="org.apache.commons.lang3.tuple.ImmutablePair">
+        <constructor>
+            <arg column="entity_id" javaType="java.lang.Long"/>
+            <arg column="is_edit" javaType="java.lang.Integer"/>
+        </constructor>
+    </resultMap>
+
+    <sql id="selectEntityVo">
+        select id, entity_code, name, specification, project_subcategory_id, create_time, update_time,is_product
+        from entity
+    </sql>
+
+    <select id="selectEntityBySubcategory" resultType="com.ruoyi.web.domain.Entity">
+        <include refid="selectEntityVo"/>
+        where project_subcategory_id = #{subcategoryId}
+    </select>
+
+    <select id="selectEntityList" parameterType="Entity" resultMap="EntityResult">
+        <include refid="selectEntityVo"/>
+        <where>  
+            <if test="entityCode != null  and entityCode != ''"> and entity_code = #{entityCode}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="specification != null  and specification != ''"> and specification = #{specification}</if>
+        </where>
+    </select>
+    
+    <select id="selectEntityById" parameterType="java.lang.Long" resultMap="EntityResult">
+        <include refid="selectEntityVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectNonProductEntityIdsByTableId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select entity_id
+        from table_entity_edit join entity
+        where table_id =#{tableId} and entity.is_product=0 and entity.id=table_entity_edit.entity_id
+
+    </select>
+
+
+
+    <select id="selectNonProductIsEditsByTableId" resultType="java.lang.Integer">
+        select is_edit
+        from table_entity_edit
+        join entity where table_id =#{tableId}  and entity.is_product=0 and entity.id=table_entity_edit.entity_id
+    </select>
+
+    <select id="selectEntityIdAndIsEditMapByTableId" resultType="org.apache.commons.lang3.tuple.Pair">
+        select cast(entity_id as signed)entity_id, is_edit from table_entity_edit join entity where table_id =#{tableId}  and entity.is_project=0 and entity.id=table_entity_edit.entity_id
+    </select>
+
+    <select id="selectIsEditsByTableIdAndEntityId"  parameterType="java.lang.Long" resultType="java.lang.Integer">
+        select is_edit
+        from table_entity_edit
+        where table_id =#{tableId} and entity_id=#{entityId}
+    </select>
+
+
+    <insert id="insertEntity" parameterType="Entity" useGeneratedKeys="true" keyProperty="id">
+        insert into entity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="entityCode != null">entity_code,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="specification != null">specification,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="entityCode != null">#{entityCode},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="specification != null">#{specification},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEntity" parameterType="Entity">
+        update entity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="entityCode != null">entity_code = #{entityCode},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="specification != null">specification = #{specification},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEntityById" parameterType="String">
+        delete from entity where id = #{id}
+    </delete>
+
+    <delete id="deleteEntityByIds" parameterType="String">
+        delete from entity where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

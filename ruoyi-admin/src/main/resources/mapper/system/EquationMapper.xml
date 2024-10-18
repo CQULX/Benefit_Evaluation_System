@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.EquationMapper">
+    
+    <resultMap type="Equation" id="EquationResult">
+        <result property="id"    column="id"    />
+        <result property="tableId"    column="table_id"    />
+        <result property="attributeId"    column="attribute_id"    />
+        <result property="isProduct"    column="is_product"    />
+        <result property="entityId"    column="entity_id"    />
+        <result property="equation"    column="equation"    />
+    </resultMap>
+
+    <sql id="selectEquationVo">
+        select id, table_id, attribute_id, is_product, entity_id, equation from equation
+    </sql>
+
+    <select id="selectEquationList" parameterType="Equation" resultMap="EquationResult">
+        <include refid="selectEquationVo"/>
+        <where>  
+            <if test="tableId != null "> and table_id = #{tableId}</if>
+            <if test="attributeId != null "> and attribute_id = #{attributeId}</if>
+            <if test="isProduct != null "> and is_product = #{isProduct}</if>
+            <if test="entityId != null "> and entity_id = #{entityId}</if>
+            <if test="equation != null  and equation != ''"> and equation = #{equation}</if>
+        </where>
+    </select>
+    
+    <select id="selectEquationById" parameterType="Long" resultMap="EquationResult">
+        <include refid="selectEquationVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEquation" parameterType="Equation" useGeneratedKeys="true" keyProperty="id">
+        insert into equation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tableId != null">table_id,</if>
+            <if test="attributeId != null">attribute_id,</if>
+            <if test="isProduct != null">is_product,</if>
+            <if test="entityId != null">entity_id,</if>
+            <if test="equation != null">equation,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tableId != null">#{tableId},</if>
+            <if test="attributeId != null">#{attributeId},</if>
+            <if test="isProduct != null">#{isProduct},</if>
+            <if test="entityId != null">#{entityId},</if>
+            <if test="equation != null">#{equation},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEquation" parameterType="Equation">
+        update equation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tableId != null">table_id = #{tableId},</if>
+            <if test="attributeId != null">attribute_id = #{attributeId},</if>
+            <if test="isProduct != null">is_product = #{isProduct},</if>
+            <if test="entityId != null">entity_id = #{entityId},</if>
+            <if test="equation != null">equation = #{equation},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEquationById" parameterType="Long">
+        delete from equation where id = #{id}
+    </delete>
+
+    <delete id="deleteEquationByIds" parameterType="String">
+        delete from equation where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

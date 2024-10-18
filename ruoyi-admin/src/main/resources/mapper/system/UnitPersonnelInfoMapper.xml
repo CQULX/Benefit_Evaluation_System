@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.UnitPersonnelInfoMapper">
+    
+    <resultMap type="UnitPersonnelInfo" id="UnitPersonnelInfoResult">
+        <result property="id"    column="id"    />
+        <result property="companyName"    column="company_name"    />
+        <result property="subordinateUnitName"    column="subordinate_unit_name"    />
+        <result property="filler"    column="filler"    />
+        <result property="fillerContact"    column="filler_contact"    />
+        <result property="projectResponsibleUnit"    column="project_responsible_unit"    />
+        <result property="projectResponsiblePerson"    column="project_responsible_person"    />
+        <result property="projectResponsibleContact"    column="project_responsible_contact"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectUnitPersonnelInfoVo">
+        select id, company_name, subordinate_unit_name, filler, filler_contact, project_responsible_unit, project_responsible_person, project_responsible_contact, create_time, update_time from unit_personnel_info
+    </sql>
+
+    <select id="selectUnitPersonnelInfoList" parameterType="UnitPersonnelInfo" resultMap="UnitPersonnelInfoResult">
+        <include refid="selectUnitPersonnelInfoVo"/>
+        <where>  
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if>
+            <if test="subordinateUnitName != null  and subordinateUnitName != ''"> and subordinate_unit_name like concat('%', #{subordinateUnitName}, '%')</if>
+            <if test="filler != null  and filler != ''"> and filler = #{filler}</if>
+            <if test="fillerContact != null  and fillerContact != ''"> and filler_contact = #{fillerContact}</if>
+            <if test="projectResponsibleUnit != null  and projectResponsibleUnit != ''"> and project_responsible_unit = #{projectResponsibleUnit}</if>
+            <if test="projectResponsiblePerson != null  and projectResponsiblePerson != ''"> and project_responsible_person = #{projectResponsiblePerson}</if>
+            <if test="projectResponsibleContact != null  and projectResponsibleContact != ''"> and project_responsible_contact = #{projectResponsibleContact}</if>
+        </where>
+    </select>
+    
+    <select id="selectUnitPersonnelInfoById" parameterType="Long" resultMap="UnitPersonnelInfoResult">
+        <include refid="selectUnitPersonnelInfoVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectUnitPersonnelInfoByLoginId" resultMap="UnitPersonnelInfoResult">
+        select p.filler, p.filler_contact, p.company_name, p.subordinate_unit_name, p.project_responsible_person,p.project_responsible_contact, p.project_responsible_unit from unit_personnel_info p, user_personnel up where p.id=up.personnel_user_id and up.sys_user_id=#{userId}
+    </select>
+
+    <insert id="insertUnitPersonnelInfo" parameterType="UnitPersonnelInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into unit_personnel_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyName != null and companyName != ''">company_name,</if>
+            <if test="subordinateUnitName != null and subordinateUnitName != ''">subordinate_unit_name,</if>
+            <if test="filler != null and filler != ''">filler,</if>
+            <if test="fillerContact != null and fillerContact != ''">filler_contact,</if>
+            <if test="projectResponsibleUnit != null and projectResponsibleUnit != ''">project_responsible_unit,</if>
+            <if test="projectResponsiblePerson != null and projectResponsiblePerson != ''">project_responsible_person,</if>
+            <if test="projectResponsibleContact != null and projectResponsibleContact != ''">project_responsible_contact,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyName != null and companyName != ''">#{companyName},</if>
+            <if test="subordinateUnitName != null and subordinateUnitName != ''">#{subordinateUnitName},</if>
+            <if test="filler != null and filler != ''">#{filler},</if>
+            <if test="fillerContact != null and fillerContact != ''">#{fillerContact},</if>
+            <if test="projectResponsibleUnit != null and projectResponsibleUnit != ''">#{projectResponsibleUnit},</if>
+            <if test="projectResponsiblePerson != null and projectResponsiblePerson != ''">#{projectResponsiblePerson},</if>
+            <if test="projectResponsibleContact != null and projectResponsibleContact != ''">#{projectResponsibleContact},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUnitPersonnelInfo" parameterType="UnitPersonnelInfo">
+        update unit_personnel_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="companyName != null and companyName != ''">company_name = #{companyName},</if>
+            <if test="subordinateUnitName != null and subordinateUnitName != ''">subordinate_unit_name = #{subordinateUnitName},</if>
+            <if test="filler != null and filler != ''">filler = #{filler},</if>
+            <if test="fillerContact != null and fillerContact != ''">filler_contact = #{fillerContact},</if>
+            <if test="projectResponsibleUnit != null and projectResponsibleUnit != ''">project_responsible_unit = #{projectResponsibleUnit},</if>
+            <if test="projectResponsiblePerson != null and projectResponsiblePerson != ''">project_responsible_person = #{projectResponsiblePerson},</if>
+            <if test="projectResponsibleContact != null and projectResponsibleContact != ''">project_responsible_contact = #{projectResponsibleContact},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUnitPersonnelInfoById" parameterType="Long">
+        delete from unit_personnel_info where id = #{id}
+    </delete>
+
+    <delete id="deleteUnitPersonnelInfoByIds" parameterType="String">
+        delete from unit_personnel_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

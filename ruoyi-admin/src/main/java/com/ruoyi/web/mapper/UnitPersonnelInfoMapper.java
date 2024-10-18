@@ -1,0 +1,68 @@
+package com.ruoyi.web.mapper;
+
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ruoyi.web.domain.UnitPersonnelInfo;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+/**
+ * 【请填写功能名称】Mapper接口
+ * 
+ * @author ruoyi
+ * @date 2024-07-22
+ */
+@Mapper
+public interface UnitPersonnelInfoMapper extends BaseMapper<UnitPersonnelInfo>
+{
+    /**
+     * 查询【请填写功能名称】
+     * 
+     * @param id 【请填写功能名称】主键
+     * @return 【请填写功能名称】
+     */
+    public UnitPersonnelInfo selectUnitPersonnelInfoById(Long id);
+
+    /**
+     * 查询【请填写功能名称】列表
+     * 
+     * @param unitPersonnelInfo 【请填写功能名称】
+     * @return 【请填写功能名称】集合
+     */
+    public List<UnitPersonnelInfo> selectUnitPersonnelInfoList(UnitPersonnelInfo unitPersonnelInfo);
+
+    /**
+     * 新增【请填写功能名称】
+     * 
+     * @param unitPersonnelInfo 【请填写功能名称】
+     * @return 结果
+     */
+    public int insertUnitPersonnelInfo(UnitPersonnelInfo unitPersonnelInfo);
+
+    /**
+     * 修改【请填写功能名称】
+     * 
+     * @param unitPersonnelInfo 【请填写功能名称】
+     * @return 结果
+     */
+    public int updateUnitPersonnelInfo(UnitPersonnelInfo unitPersonnelInfo);
+
+    /**
+     * 删除【请填写功能名称】
+     * 
+     * @param id 【请填写功能名称】主键
+     * @return 结果
+     */
+    public int deleteUnitPersonnelInfoById(Long id);
+
+    /**
+     * 批量删除【请填写功能名称】
+     * 
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteUnitPersonnelInfoByIds(Long[] ids);
+
+    UnitPersonnelInfo selectUnitPersonnelInfoByLoginId(@Param("userId") Long userId);
+}

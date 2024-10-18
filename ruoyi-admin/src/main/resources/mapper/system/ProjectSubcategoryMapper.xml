@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.ProjectSubcategoryMapper">
+    
+    <resultMap type="ProjectSubcategory" id="ProjectSubcategoryResult">
+        <result property="id"    column="id"    />
+        <result property="projectCategoryId"    column="project_category_id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="projectSubcategoryName"    column="project_subcategory_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProjectSubcategoryVo">
+        select id, project_category_id, template_id, project_subcategory_name, create_time, update_time from project_subcategory
+    </sql>
+
+    <select id="selectProjectSubcategoryList" parameterType="ProjectSubcategory" resultMap="ProjectSubcategoryResult">
+        <include refid="selectProjectSubcategoryVo"/>
+        <where>  
+            <if test="projectCategoryId != null "> and project_category_id = #{projectCategoryId}</if>
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="projectSubcategoryName != null  and projectSubcategoryName != ''"> and project_subcategory_name like concat('%', #{projectSubcategoryName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectSubcategoryById" parameterType="String" resultMap="ProjectSubcategoryResult">
+        <include refid="selectProjectSubcategoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProjectSubcategory" parameterType="ProjectSubcategory" useGeneratedKeys="true" keyProperty="id">
+        insert into project_subcategory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectCategoryId != null">project_category_id,</if>
+            <if test="templateId != null">template_id,</if>
+            <if test="projectSubcategoryName != null and projectSubcategoryName != ''">project_subcategory_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectCategoryId != null">#{projectCategoryId},</if>
+            <if test="templateId != null">#{templateId},</if>
+            <if test="projectSubcategoryName != null and projectSubcategoryName != ''">#{projectSubcategoryName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProjectSubcategory" parameterType="ProjectSubcategory">
+        update project_subcategory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectCategoryId != null">project_category_id = #{projectCategoryId},</if>
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="projectSubcategoryName != null and projectSubcategoryName != ''">project_subcategory_name = #{projectSubcategoryName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectSubcategoryById" parameterType="String">
+        delete from project_subcategory where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectSubcategoryByIds" parameterType="String">
+        delete from project_subcategory where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

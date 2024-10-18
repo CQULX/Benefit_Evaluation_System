@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.AttributeMapper">
+    
+    <resultMap type="Attribute" id="AttributeResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectAttributeVo">
+        select id, name, type, create_time, update_time from attribute
+    </sql>
+
+    <select id="selectAttributeList" parameterType="Attribute" resultMap="AttributeResult">
+        <include refid="selectAttributeVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectAttributeByid" parameterType="String" resultMap="AttributeResult">
+        <include refid="selectAttributeVo"/>
+        where id = #{id}
+    </select>
+
+    <delete id="deleteAttributeByid" parameterType="String">
+        delete from attribute where id = #{id}
+    </delete>
+
+    <delete id="deleteAttributeByids" parameterType="String">
+        delete from attribute where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- SQL 查询配置 -->
+    <sql id="selectAttribute">
+        select id, name, type, create_time, update_time
+        from attribute
+    </sql>
+
+    <!-- table_attribute 根据子表ID批量查询查询属性ID -->
+    <select id="selectAttributeIdsByTableIds" resultType="java.lang.Long">
+        select attribute_id
+        from table_attribute
+        where table_id in
+        <foreach item="tableId" collection="tableIds" open="(" separator="," close=")">
+            #{tableId}
+        </foreach>
+    </select>
+
+    <!-- 根据属性ID批量查询属性 -->
+    <select id="selectAttributeByIds" resultType="com.ruoyi.web.domain.Attribute">
+        <include refid="selectAttribute"/>
+        where id in
+        <foreach item="id" collection="attributeIdUnion" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 查询所有属性 -->
+    <select id="selectAllAttributes" resultMap="AttributeResult">
+        <include refid="selectAttribute"/>
+    </select>
+
+    <!-- 根据ID查询属性 -->
+    <select id="selectAttributeById" resultMap="AttributeResult">
+        <include refid="selectAttribute"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectEntityRelatedByTableIdAndAttributeId" resultType="java.lang.Integer">
+        select entity_related
+        from table_attribute
+        where table_id = #{tableId}
+        and attribute_id = #{attributeId}
+    </select>
+
+    <select id="findAllByTableId" resultType="java.lang.Long">
+        select attribute_id
+        from table_attribute
+        where table_id = #{tableId}
+    </select>
+
+    <select id="selectAttributeByName" resultType="com.ruoyi.web.domain.Attribute">
+        <include refid="selectAttribute"/>
+        where name = #{name}
+    </select>
+
+    <!-- 插入属性 -->
+    <insert id="insertAttribute">
+        insert into attribute (name, type, create_time, update_time)
+        values (#{name}, #{type}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!-- 更新属性 -->
+    <update id="updateAttribute">
+        update attribute
+        set name = #{name},
+            type = #{type},
+            create_time = #{createTime},
+            update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!-- 删除属性 -->
+    <delete id="deleteAttributeById">
+        delete from attribute
+        where id = #{id}
+    </delete>
+
+</mapper>
+

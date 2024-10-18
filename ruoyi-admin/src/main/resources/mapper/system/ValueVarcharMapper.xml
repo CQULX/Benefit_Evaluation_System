@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.ValueVarcharMapper">
+    
+    <resultMap type="ValueVarchar" id="ValueVarcharResult">
+        <result property="id"    column="id"    />
+        <result property="projectInfoId"    column="project_info_id"    />
+        <result property="tableId"    column="table_id"    />
+        <result property="projectEntityId"    column="project_entity_id"    />
+        <result property="attributeId"    column="attribute_id"    />
+        <result property="value"    column="value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectValueVarcharVo">
+        select id, project_info_id, table_id, project_entity_id, attribute_id, value, create_time, update_time from value_varchar
+    </sql>
+
+    <select id="selectValueVarcharList" parameterType="ValueVarchar" resultMap="ValueVarcharResult">
+        <include refid="selectValueVarcharVo"/>
+        <where>  
+            <if test="projectInfoId != null "> and project_info_id = #{projectInfoId}</if>
+            <if test="tableId != null "> and table_id = #{tableId}</if>
+            <if test="projectEntityId != null "> and project_entity_d = #{projectEntityId}</if>
+            <if test="attributeId != null "> and attribute_id = #{attributeId}</if>
+        </where>
+    </select>
+    
+    <select id="selectValueVarcharById" parameterType="String" resultMap="ValueVarcharResult">
+        <include refid="selectValueVarcharVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectEntityIdsByIds" resultType="java.lang.Long">
+        SELECT distinct(project_entity_id) FROM `value_varchar` where project_info_id=#{projectId} and table_id=#{tableId}
+    </select>
+
+    <select id="findByTableIdAndAttrValue" resultType="com.ruoyi.web.domain.ValueVarchar">
+        select * from value_varchar where table_id = #{tableId} and value = #{attrValue}
+    </select>
+    <select id="selectValueByTableIdAndAttributeId" resultType="java.lang.String">
+        select value from value_varchar where table_id = #{tableId} and attribute_id = #{attributeId}
+    </select>
+    <select id="findValueByProjectInfoIdAndTableIdAndAttributeId" resultType="java.lang.String">
+        select value from value_varchar where project_info_id = #{projectInfoId} and table_id = #{tableId} and attribute_id = #{attributeId}
+    </select>
+
+
+    <insert id="insertValueVarchar" parameterType="ValueVarchar" useGeneratedKeys="true" keyProperty="id">
+        insert into value_varchar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectInfoId != null">project_info_id,</if>
+            <if test="projectEntityId != null">project_entity_id,</if>
+            <if test="tableId != null">table_id,</if>
+            <if test="attributeId != null">attribute_id,</if>
+            <if test="value != null">value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectInfoId != null">#{projectInfoId},</if>
+            <if test="projectEntityId != null">#{projectEntityId},</if>
+            <if test="tableId != null">#{tableId},</if>
+            <if test="attributeId != null">#{attributeId},</if>
+            <if test="value != null">#{value},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateValueVarchar" parameterType="ValueVarchar">
+        update value_varchar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectInfoId != null">project_info_id = #{projectInfoId},</if>
+            <if test="projectEntityId != null">project_entity_id = #{projectEntityId},</if>
+            <if test="tableId != null">table_id = #{tableId},</if>
+            <if test="attributeId != null">attribute_id = #{attributeId},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteValueVarcharById" parameterType="String">
+        delete from value_varchar where id = #{id}
+    </delete>
+
+    <delete id="deleteValueVarcharByIds" parameterType="String">
+        delete from value_varchar where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

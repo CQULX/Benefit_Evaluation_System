@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.TableMapper">
+
+    <resultMap type="com.ruoyi.web.domain.Table" id="TableResult">
+        <result property="id" column="id"/>
+        <result property="moduleId" column="module_id"/>
+        <result property="name" column="name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="entityRelated" column="entity_related"/>
+        <result property="isTotal" column="is_total"/>
+        <result property="timeRelated" column="time_related"/>
+    </resultMap>
+
+    <sql id="selectTable">
+        select id, module_id, name, create_time, update_time, entity_related, is_total, time_related
+        from `table`
+    </sql>
+
+    <select id="selectTableByModuleId" resultType="com.ruoyi.web.domain.Table">
+        <include refid="selectTable"/>
+        where module_id = #{moduleId}
+    </select>
+    <select id="selectAttributeNamesByTableId" resultType="java.lang.String">
+        select a.name from attribute as a join table_attribute as ta where a.id=ta.attribute_id and ta.table_id=#{tableId}
+    </select>
+    <select id="findByModuleId" resultType="com.ruoyi.web.domain.Table" parameterType="java.lang.Long">
+        <include refid="selectTable"/>
+        where module_id = #{moduleId}
+    </select>
+
+</mapper>

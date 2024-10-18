@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.ProjectInfoMapper">
+    
+    <resultMap type="ProjectInfo" id="ProjectInfoResult">
+        <result property="id"    column="id"    />
+        <result property="unitPersonId"    column="unit_person_id"    />
+        <result property="projectType"    column="project_type"    />
+        <result property="projectCategoryId"    column="project_category_id"    />
+        <result property="projectSubcategoryId"    column="project_subcategory_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="projectNumber"    column="project_number"    />
+        <result property="constructionStartDate"    column="construction_start_date"    />
+        <result property="constructionEndDate"    column="construction_end_date"    />
+        <result property="constructionDurationYears"    column="construction_duration_years"    />
+        <result property="evaluationStartDate"    column="evaluation_start_date"    />
+        <result property="evaluationEndDate"    column="evaluation_end_date"    />
+        <result property="projectEvaluationDurationYears"    column="project_evaluation_duration_years"    />
+        <result property="singleBatchAssetEvaluationDurationYears"    column="single_batch_asset_evaluation_duration_years"    />
+        <result property="projectDescription"    column="project_description"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectProjectInfoVo">
+        select id, unit_person_id, project_type, project_category_id, project_subcategory_id, project_name, project_number, construction_start_date, construction_end_date, construction_duration_years, evaluation_start_date, evaluation_end_date, project_evaluation_duration_years, single_batch_asset_evaluation_duration_years, project_description, create_time, update_time from project_info
+    </sql>
+
+    <select id="selectProjectInfoList" parameterType="ProjectInfo" resultMap="ProjectInfoResult">
+        <include refid="selectProjectInfoVo"/>
+        <where>  
+            <if test="unitPersonId != null  and unitPersonId != ''"> and unit_person_id = #{unitPersonId}</if>
+            <if test="projectType != null  and projectType != ''"> and project_type = #{projectType}</if>
+            <if test="projectCategoryId != null  and projectCategoryId != ''"> and project_category_id = #{projectCategoryId}</if>
+            <if test="projectSubcategoryId != null  and projectSubcategoryId != ''"> and project_subcategory_id = #{projectSubcategoryId}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="projectNumber != null  and projectNumber != ''"> and project_number = #{projectNumber}</if>
+            <if test="constructionStartDate != null "> and construction_start_date = #{constructionStartDate}</if>
+            <if test="constructionEndDate != null "> and construction_end_date = #{constructionEndDate}</if>
+            <if test="constructionDurationYears != null "> and construction_duration_years = #{constructionDurationYears}</if>
+            <if test="evaluationStartDate != null "> and evaluation_start_date = #{evaluationStartDate}</if>
+            <if test="evaluationEndDate != null "> and evaluation_end_date = #{evaluationEndDate}</if>
+            <if test="projectEvaluationDurationYears != null "> and project_evaluation_duration_years = #{projectEvaluationDurationYears}</if>
+            <if test="singleBatchAssetEvaluationDurationYears != null "> and single_batch_asset_evaluation_duration_years = #{singleBatchAssetEvaluationDurationYears}</if>
+            <if test="projectDescription != null  and projectDescription != ''"> and project_description = #{projectDescription}</if>
+        </where>
+    </select>
+    
+    <select id="selectProjectInfoById" parameterType="java.lang.Long" resultMap="ProjectInfoResult">
+        <include refid="selectProjectInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSubCategoryIdByProjectInfoId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        select project_subcategory_id
+        from project_info
+        where id = #{projectInfoId}
+    </select>
+
+    <!-- 通过项目信息id查询项目的开始时间 -->
+    <select id="selectCStartDateByProjectInfoId" resultType="java.util.Date">
+        select construction_start_date
+        from project_info
+        where id = #{projectInfoId}
+    </select>
+    <select id="selectTemplateIdByProjectId" resultType="java.lang.Long">
+        select template_id from project_category as pc join project_info as pi where pc.id=pi.project_category_id and pi.id=#{projectInfoId}
+    </select>
+    <select id="selectProjectProductInfoByIds" resultType="java.lang.Object">
+        select * from project_entity where project_info_id=#{projectId} and entity_id=#{entityId}
+    </select>
+    <select id="selectEntitesListByProjectInfoId" resultType="java.lang.Long">
+        select entity_id from project_entity where project_info_id=#{projectInfoId}
+    </select>
+    <select id="selectProjectEntityInfoByEntityId" resultType="java.lang.Object">
+        select * from project_entity where entity_id=#{entityId} and project_info_id=#{projectId}
+    </select>
+    <select id="selectTheLastProjectInfo" resultType="com.ruoyi.web.domain.ProjectInfo">
+        SELECT * FROM project_info order by id desc limit 1;
+    </select>
+
+
+    <insert id="insertProjectInfo" parameterType="ProjectInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into project_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitPersonId != null and unitPersonId != ''">unit_person_id,</if>
+            <if test="projectType != null and projectType != ''">project_type,</if>
+            <if test="projectCategoryId != null and projectCategoryId != ''">project_category_id,</if>
+            <if test="projectSubcategoryId != null and projectSubcategoryId != ''">project_subcategory_id,</if>
+            <if test="projectName != null and projectName != ''">project_name,</if>
+            <if test="projectNumber != null and projectNumber != ''">project_number,</if>
+            <if test="constructionStartDate != null">construction_start_date,</if>
+            <if test="constructionEndDate != null">construction_end_date,</if>
+            <if test="constructionDurationYears != null">construction_duration_years,</if>
+            <if test="evaluationStartDate != null">evaluation_start_date,</if>
+            <if test="evaluationEndDate != null">evaluation_end_date,</if>
+            <if test="projectEvaluationDurationYears != null">project_evaluation_duration_years,</if>
+            <if test="singleBatchAssetEvaluationDurationYears != null">single_batch_asset_evaluation_duration_years,</if>
+            <if test="projectDescription != null and projectDescription != ''">project_description,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitPersonId != null and unitPersonId != ''">#{unitPersonId},</if>
+            <if test="projectType != null and projectType != ''">#{projectType},</if>
+            <if test="projectCategoryId != null and projectCategoryId != ''">#{projectCategoryId},</if>
+            <if test="projectSubcategoryId != null and projectSubcategoryId != ''">#{projectSubcategoryId},</if>
+            <if test="projectName != null and projectName != ''">#{projectName},</if>
+            <if test="projectNumber != null and projectNumber != ''">#{projectNumber},</if>
+            <if test="constructionStartDate != null">#{constructionStartDate},</if>
+            <if test="constructionEndDate != null">#{constructionEndDate},</if>
+            <if test="constructionDurationYears != null">#{constructionDurationYears},</if>
+            <if test="evaluationStartDate != null">#{evaluationStartDate},</if>
+            <if test="evaluationEndDate != null">#{evaluationEndDate},</if>
+            <if test="projectEvaluationDurationYears != null">#{projectEvaluationDurationYears},</if>
+            <if test="singleBatchAssetEvaluationDurationYears != null">#{singleBatchAssetEvaluationDurationYears},</if>
+            <if test="projectDescription != null and projectDescription != ''">#{projectDescription},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+    <insert id="saveProjectProductInfoByIds">
+        insert into project_entity (`project_info_id`,`entity_id`) values(#{projectId},#{entityId})
+    </insert>
+
+    <update id="updateProjectInfo" parameterType="ProjectInfo">
+        update project_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitPersonId != null and unitPersonId != ''">unit_person_id = #{unitPersonId},</if>
+            <if test="projectType != null and projectType != ''">project_type = #{projectType},</if>
+            <if test="projectCategoryId != null and projectCategoryId != ''">project_category_id = #{projectCategoryId},</if>
+            <if test="projectSubcategoryId != null and projectSubcategoryId != ''">project_subcategory_id = #{projectSubcategoryId},</if>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="projectNumber != null and projectNumber != ''">project_number = #{projectNumber},</if>
+            <if test="constructionStartDate != null">construction_start_date = #{constructionStartDate},</if>
+            <if test="constructionEndDate != null">construction_end_date = #{constructionEndDate},</if>
+            <if test="constructionDurationYears != null">construction_duration_years = #{constructionDurationYears},</if>
+            <if test="evaluationStartDate != null">evaluation_start_date = #{evaluationStartDate},</if>
+            <if test="evaluationEndDate != null">evaluation_end_date = #{evaluationEndDate},</if>
+            <if test="projectEvaluationDurationYears != null">project_evaluation_duration_years = #{projectEvaluationDurationYears},</if>
+            <if test="singleBatchAssetEvaluationDurationYears != null">single_batch_asset_evaluation_duration_years = #{singleBatchAssetEvaluationDurationYears},</if>
+            <if test="projectDescription != null and projectDescription != ''">project_description = #{projectDescription},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProjectInfoById" parameterType="String">
+        delete from project_info where id = #{id}
+    </delete>
+
+    <delete id="deleteProjectInfoByIds" parameterType="String">
+        delete from project_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteProjectEntityInfoByEntityId">
+        delete from project_entity where entity_id=#{entityId}
+    </delete>
+</mapper>
